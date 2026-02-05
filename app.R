@@ -1,4 +1,4 @@
-#Try leaflet?
+#Make a plot 
 
 library(leaflet)
 library(tidyverse)
@@ -71,7 +71,10 @@ ui <- fluidPage(
       #checkbox to select if you want growing season only (May - Sept)
       checkboxInput(inputId = 'growing', 
                     label = 'Show growing season only (May - Sept):', 
-                    value = TRUE)
+                    value = TRUE),
+      
+      downloadButton(outputId = 'downloadData', 
+                    label = 'Download CSV')
     ),
     
     # Main panel for displaying outputs ----
@@ -94,8 +97,7 @@ ui <- fluidPage(
 
 # Define server logic to plot various variables against mpg ----
 server <- function(input, output) {
-  
-  data_url <- "https://raw.githubusercontent.com/patrickDNR/Pool-8-LTRM/refs/heads/main/Data/LTRM_WQ_all.csv"
+
   
   # Compute the formula text ----
   # This is in a reactive expression since it is shared by the
@@ -170,6 +172,15 @@ server <- function(input, output) {
     
     chart
   })
+  
+  output$downloadData <- downloadHandler(
+    filename = function(){
+      paste('WQdata-', Sys.Date(), '.csv', sep = '')
+    },
+    content = function(file){
+      write.csv(filtered_data(), file, row.names = FALSE)
+    }
+  )
   
 }
 
