@@ -1,2 +1,2 @@
-# Pool-8-LTRM
-Repo to store scripts for analysis of Pool 8 WQ, veg, fish, and hydrology data. Repo also stores data viz for components
+# Pool-8-WQ-Mapping
+Repo to store scripts and water quality mapping R Shiny app
