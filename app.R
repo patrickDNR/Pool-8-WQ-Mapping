@@ -40,7 +40,8 @@ ui <- bslib::page_sidebar(
   # Sidebar panel for inputs ----
   sidebar = sidebar(
     
-
+    sidebarPanel(
+      width = 8,
       
       # Input: Let's try to do date range
       # Input: Maybe a slider for time series?
@@ -104,7 +105,7 @@ ui <- bslib::page_sidebar(
       
       downloadButton(outputId = 'downloadData', 
                      label = 'Download CSV')
-    
+    )
   ),
   
   # Main panel for displaying outputs ----
