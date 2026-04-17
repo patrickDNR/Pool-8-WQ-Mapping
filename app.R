@@ -10,32 +10,66 @@ library(bslib)
 library(viridis)
 
 #download data
-data_url <- "https://raw.githubusercontent.com/patrickDNR/Pool-8-LTRM/refs/heads/main/Data/WaterQual_SRS.csv"
+data_url <- "https://raw.githubusercontent.com/patrickDNR/Pool-8-WQ-Mapping/refs/heads/main/Data/WaterQual_SRS.csv"
 download.file(data_url, 'WaterQual_SRS.csv')
 
 wq <- read.csv('WaterQual_SRS.csv')
 
 
 # Define UI for water quality map app ----
-ui <- fluidPage(
+ui <- bslib::page_sidebar(
+  
+  id = 'WQ data',
   
   # App title ----
-  titlePanel("Water Qualiy Mapping"),
+  title = "Water Qualiy Mapping",
   
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
+  #theme
+  theme = bslib::bs_theme(version = 5),
+  
+  #background color
+  fillable_mobile = TRUE,
+  
+  #window title
+  window_title = 'WQ data',
+  
+  #background color 
+  bg = 'darkgreen',
+  
+  
+  # Sidebar panel for inputs ----
+  sidebar = sidebar(
     
-    # Sidebar panel for inputs ----
     sidebarPanel(
       
       # Input: Let's try to do date range
-      dateRangeInput(inputId = 'date_range', 
-                     label = 'Select Date Range:', 
-                     start = min(wq$DATE), 
-                     end = max(wq$DATE), 
-                     min = min(wq$DATE), 
-                     max = max(wq$DATE), 
-                     format = 'yyyy-mm-dd'),
+      # Input: Maybe a slider for time series?
+      sliderInput(inputId = 'date_range', 
+                  label = 'Select Date Range:', 
+                  min = min(wq$Year), 
+                  max = max(wq$Year),
+                  step = 1,
+                  value = c(min(wq$Year), max(wq$Year)), 
+                  sep = '', 
+                  ticks = F),
+      
+      #Select months of interest
+      checkboxGroupInput(inputId = 'months', 
+                         label = 'Select Sampling Months:', 
+                         choices = c('January' = 'Jan', 
+                                     'February' = 'Feb', 
+                                     'March' = 'Mar',
+                                     'April' = 'Apr', 
+                                     'May' = 'May', 
+                                     'June' = 'Jun', 
+                                     'July' = 'Jul', 
+                                     'August' = 'Aug', 
+                                     'September' = "Sep", 
+                                     'October' = 'Oct', 
+                                     'November' = 'Nov', 
+                                     'December' = 'Dec'), 
+                         selected = c('Jun', 'Jul', 'Aug', 'Sep', 
+                                      'Oct', 'Nov')),
       
       
       #Input: Select constituent
@@ -68,36 +102,29 @@ ui <- fluidPage(
                     label = 'Show outliers:', 
                     value = TRUE),
       
-      #checkbox to select if you want growing season only (May - Sept)
-      checkboxInput(inputId = 'growing', 
-                    label = 'Show growing season only (May - Sept):', 
-                    value = TRUE),
-      
       downloadButton(outputId = 'downloadData', 
-                    label = 'Download CSV')
-    ),
-    
-    # Main panel for displaying outputs ----
-    mainPanel(
-      
-      # Output: Formatted text for caption ----
-      h3(textOutput("caption")),
-      
-      fluidRow(
-        plotOutput('wqBoxes', height = 400, width = 600)
-      ),
-      
-      # Output: Mpa of WQ variable ----
-      fluidRow(
-        leafletOutput("wqMap", height = 800))
-      
+                     label = 'Download CSV')
     )
+  ),
+  
+  # Main panel for displaying outputs ----
+  navset_card_underline(
+    
+    nav_panel('Time Series', plotOutput('wqBoxes', height = 400, width = 600))
+    ,
+    
+    # Output: Map of WQ variable ----
+    
+    nav_panel('WQ sample point map',leafletOutput("wqMap", height = 800))
   )
+  
+  
 )
+
 
 # Define server logic to plot various variables against mpg ----
 server <- function(input, output) {
-
+  
   
   # Compute the formula text ----
   # This is in a reactive expression since it is shared by the
@@ -108,19 +135,11 @@ server <- function(input, output) {
   
   
   filtered_data <- reactive({
-    if(input$growing){
-      wq %>%
-        filter(DATE >= input$date_range[1] & DATE <= input$date_range[2]) %>%
-        filter(!is.na(get(input$variable))) %>%
-        filter(Month == 'May' | Month == 'Jun' | Month == 'Jul' | Month == 'Aug' |
-                 Month == 'Sept')
-      
-    }
-    else{
+    
     wq %>%
-      filter(DATE >= input$date_range[1] & DATE <= input$date_range[2]) %>%
-      filter(!is.na(get(input$variable)))
-    }
+      filter(Year >= input$date_range[1] & Year <= input$date_range[2]) %>%
+      filter(!is.na(get(input$variable))) %>%
+      filter(Month %in% input$months)
   })
   
   colorpal <- reactive({
