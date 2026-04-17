@@ -40,7 +40,7 @@ ui <- bslib::page_sidebar(
   # Sidebar panel for inputs ----
   sidebar = sidebar(
     
-    sidebarPanel(
+
       
       # Input: Let's try to do date range
       # Input: Maybe a slider for time series?
@@ -104,13 +104,13 @@ ui <- bslib::page_sidebar(
       
       downloadButton(outputId = 'downloadData', 
                      label = 'Download CSV')
-    )
+    
   ),
   
   # Main panel for displaying outputs ----
   navset_card_underline(
     
-    nav_panel('Time Series', plotOutput('wqBoxes', height = 400, width = 600))
+    nav_panel('Time Series', plotOutput('wqBoxes', height = 500, width = 900))
     ,
     
     # Output: Map of WQ variable ----
