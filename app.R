@@ -115,6 +115,8 @@ ui <- bslib::page_sidebar(
   navset_card_underline(
     
     nav_panel('About', 
+              tags$img(height = 100, width = 100,
+                       src = 'https://umesc.usgs.gov/ltrmp/images/buttons/water-hi.png'),
               tags$html(
                 tags$head(
                   tags$title('UMRR Long Term Resource Monitoring - Water Quality component')
