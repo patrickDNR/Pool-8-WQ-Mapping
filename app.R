@@ -114,6 +114,30 @@ ui <- bslib::page_sidebar(
 
   navset_card_underline(
     
+    nav_panel('About', 
+              tags$html(
+                tags$head(
+                  tags$title('UMRR Long Term Resource Monitoring - Water Quality component')
+                ),
+                tags$body(
+                  'Data from this visualization comes from the Long Term Resource
+                    Monitoring element of the Upper Mississippi River Restoration program. The data displayed
+                    are specific for Pool 8 of the UMR, collected by the La Crosse Field Station and the 
+                    Wisconsin Department of Natural Resources in collaboration with USGS and US Army Corps of 
+                    Engineers. For more information on the water quality component, please visit: ', a(
+                    "the LTRM website",
+                    target = "_blank",
+                    href = "https://umesc.usgs.gov/data_library/water_quality/water_quality_page.html"
+                  ), 
+                  
+                  tags$p("For more information on the river and Wisconsin's work on the UMR, 
+                         please visit:", a('UMR by the Wisconsin DNR', 
+                                           target = "_blank", 
+                                           href = "https://dnr.wisconsin.gov/topic/UMR/About.html"))
+                ), 
+  
+              )),
+    
     nav_panel('Time Series', plotOutput('wqBoxes', height = 500, width = 900))
     ,
     
